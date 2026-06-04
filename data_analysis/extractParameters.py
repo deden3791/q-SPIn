@@ -2,28 +2,27 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator
-import h5py
 from scipy.signal import find_peaks
 import find_slope
+from data_analysis_helpers import apply_axis_style, find_main_branch
 
 # ====== files ======
 filepaths = [
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 1\TFBZPK_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 2\TFC0GE_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 3\TFC0XB_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 4\TFC1GM_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 5\TFC1WW_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 6\TFC2BT_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 7\TFC2S7_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 8\TFC37C_2D_current.h5",
-    r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\Measurements\Template\results\results\h5\OliviaBigMagnet\position 9\TFC3Q1_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 1\TFBZPK_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 2\TFC0GE_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 3\TFC0XB_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 4\TFC1GM_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 5\TFC1WW_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 6\TFC2BT_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 7\TFC2S7_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 8\TFC37C_2D_current.h5",
+    r"measurements\BigMagnet_MawganRes_0.5mm_21052026\position 9\TFC3Q1_2D_current.h5",
 ]
 
 # ====== constants ======
 freq_min = 4.4 # GHz - lower bound of frequency region of interest
 freq_max = 5.2 # GHz - upper bound of frequency region of interest
-fixed_slope, c_ts, dip_currents, dip_freqs, f_c, f_dip = find_slope.find_slope(filepaths, freq_min, freq_max, show=False)
+amplitude, frequencyGHz, current, fixed_slope, c_ts, dip_currents, dip_freqs, f_c, f_dip = find_slope.find_slope(filepaths, freq_min, freq_max, show=False)
 
 # Peak/dip detection knobs inside the window_halfspan GHz window
 window_halfspan = 0.1   # GHz
@@ -31,75 +30,12 @@ peak_prominence = 0.45  # smaller -> more peaks found
 dip_prominence  = 0.1   # smaller -> more dips found
 min_peak_distance_pts = 1
 
-# ====== helpers ======
-
-def read_h5(filepath):
-    with h5py.File(filepath, 'r') as f:
-        amplitude = np.array(f['entry']['data0']['amplitude'])
-        frequencyGHz = np.array(f['entry']['data0']['frequency']) / 1e9
-        current = np.array(f['entry']['data0']['current'])
-    return amplitude, frequencyGHz, current
-
-def apply_axis_style(ax):
-    """Apply consistent tick/spine styling to an axis."""
-    for spine in ax.spines.values():
-        spine.set_linewidth(1.5)
-    ax.tick_params(axis='both', direction='in', width=1.15, pad=5, length=6,
-                   labelsize=12, right=True, left=True, top=True, bottom=True)
-    ax.xaxis.set_minor_locator(MultipleLocator(0.1))
-    ax.yaxis.set_minor_locator(MultipleLocator(0.1))
-    ax.tick_params(axis='both', which='minor', direction='in', width=1, pad=5,
-                   length=3, right=True, left=True, top=True, bottom=True, color='gray')
-
-
-def find_main_branch(dip_freqs, dip_currents, fixed_slope):
-    """Cluster dip points by intercept histogram; return (c_main, mask_main)."""
-    intercepts = dip_freqs - fixed_slope * dip_currents
-    hist, bin_edges = np.histogram(intercepts, bins=30)
-    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-
-    peaks_hist, _ = find_peaks(hist, prominence=0.1)
-
-    if len(peaks_hist) >= 2:
-        sorted_idx = np.argsort(hist[peaks_hist])[::-1]
-        c1 = bin_centers[peaks_hist[sorted_idx[0]]]
-        c2 = bin_centers[peaks_hist[sorted_idx[1]]]
-        mask1 = np.abs(intercepts - c1) < np.abs(intercepts - c2)
-        mask_main = mask1 if np.sum(mask1) >= np.sum(~mask1) else ~mask1
-    else:
-        mask_main = np.ones(len(dip_currents), dtype=bool)
-
-    c_main = float(np.median(intercepts[mask_main]))
-    return c_main, mask_main
-
 # ====== main loop ======
 
 for filepath in filepaths:
-
-    # --- load data ---
-    amplitude, frequencyGHz, current = read_h5(filepath)
     amplitude_dB = 20 * np.log10(amplitude)
     h5_name = os.path.basename(filepath)
     extent  = [current.min(), current.max(), frequencyGHz.min(), frequencyGHz.max()]
-
-    # --- detect bright cavity modes (peaks at max current, skip first 30 pts of noise) ---
-    peak_indices, _ = find_peaks(amplitude_dB[-1, 30:], prominence=0.5)
-    peak_indices += 30
-    f_c = frequencyGHz[peak_indices]
-    f_c = f_c[(f_c > freq_min) & (f_c < freq_max)]
-
-    # --- collect spin-wave dispersion points ---
-    # exclude frequencies near bright modes or the dark mode dip
-    dip_currents, dip_freqs = [], []
-    for i, fi in enumerate(frequencyGHz):
-        near_peak = np.any(np.abs(fi - f_c) <= 0.025)
-        near_dip  = (f_dip is not None) and (np.abs(fi - f_dip) <= 0.1)
-        if freq_min < fi < freq_max and not near_peak and not near_dip:
-            dip_currents.append(current[np.argmin(amplitude_dB[:, i])])
-            dip_freqs.append(fi)
-
-    dip_currents = np.array(dip_currents)
-    dip_freqs    = np.array(dip_freqs)
 
     # --- fit main dispersion branch ---
     c_main, mask_main = find_main_branch(dip_freqs, dip_currents, fixed_slope)

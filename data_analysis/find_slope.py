@@ -61,7 +61,7 @@ def find_slope(filepaths, freq_min, freq_max, show=False):
 
             plt.tight_layout()
             plt.show()
-    return slope_ts, c_ts, dip_currents, dip_freqs, f_c, f_dip
+    return amplitude, frequencyGHz, current, slope_ts, c_ts, dip_currents, dip_freqs, f_c, f_dip
 
 if __name__ == "__main__":
     find_slope()
