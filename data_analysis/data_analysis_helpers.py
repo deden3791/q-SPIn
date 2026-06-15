@@ -1,7 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import h5py
 from scipy.signal import find_peaks
+from matplotlib.ticker import MultipleLocator
 
 def read_h5(filepath):
     """Read amplitude, frequency (GHz), and current from an HDF5 file."""
@@ -9,7 +9,9 @@ def read_h5(filepath):
         amplitude = np.array(f['entry']['data0']['amplitude'])
         frequencyGHz = np.array(f['entry']['data0']['frequency']) / 1e9
         current = np.array(f['entry']['data0']['current'])
-    return amplitude, frequencyGHz, current
+
+        amplitude_dB = 20 * np.log10(np.abs(amplitude))
+    return amplitude, amplitude_dB, frequencyGHz, current
 
 def cavity_detection(amplitude_dB, frequencyGHz):
     '''Detect cavity resonance and dip frequencies from the reference trace (last current).'''
@@ -18,6 +20,10 @@ def cavity_detection(amplitude_dB, frequencyGHz):
     peak_idx, _ = find_peaks(ref_trace, prominence=0.5)
     f_c  = freq_trim[peak_idx] if len(peak_idx) > 0 else np.array([])
     f_dip = freq_trim[np.argmin(ref_trace)]
+    # peak_indices, _ = find_peaks(amplitude_dB[-1, 30:], prominence=0.5)
+    # peak_indices += 30
+    # f_c = frequencyGHz[peak_indices]
+    # f_c = f_c[(f_c > freq_min) & (f_c < freq_max)]
     return f_c, f_dip
 
 def dip_tracking(amplitude_dB, frequencyGHz, current, freq_min, freq_max, f_c, f_dip, full=False):
@@ -53,3 +59,35 @@ def theil_sen_slope(x, y, max_pairs=5000):
     valid = np.abs(dx) > 1e-9
     slopes = dy[valid] / dx[valid]
     return float(np.median(slopes))
+
+def apply_axis_style(ax):
+    """Apply consistent tick/spine styling to an axis."""
+    for spine in ax.spines.values():
+        spine.set_linewidth(1.5)
+    ax.tick_params(axis='both', direction='in', width=1.15, pad=5, length=6,
+                   labelsize=12, right=True, left=True, top=True, bottom=True)
+    ax.xaxis.set_minor_locator(MultipleLocator(0.1))
+    ax.yaxis.set_minor_locator(MultipleLocator(0.1))
+    ax.tick_params(axis='both', which='minor', direction='in', width=1, pad=5,
+                   length=3, right=True, left=True, top=True, bottom=True, color='gray')
+
+
+def find_main_branch(dip_freqs, dip_currents, fixed_slope):
+    """Cluster dip points by intercept histogram; return (c_main, mask_main)."""
+    intercepts = dip_freqs - fixed_slope * dip_currents
+    hist, bin_edges = np.histogram(intercepts, bins=30)
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+    peaks_hist, _ = find_peaks(hist, prominence=0.1)
+
+    if len(peaks_hist) >= 2:
+        sorted_idx = np.argsort(hist[peaks_hist])[::-1]
+        c1 = bin_centers[peaks_hist[sorted_idx[0]]]
+        c2 = bin_centers[peaks_hist[sorted_idx[1]]]
+        mask1 = np.abs(intercepts - c1) < np.abs(intercepts - c2)
+        mask_main = mask1 if np.sum(mask1) >= np.sum(~mask1) else ~mask1
+    else:
+        mask_main = np.ones(len(dip_currents), dtype=bool)
+
+    c_main = float(np.median(intercepts[mask_main]))
+    return c_main, mask_main

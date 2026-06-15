@@ -1,0 +1,106 @@
+{
+    "analyzed": false,
+    "hdf_relpath": "RESULTS_H5\\Amy\\TDUJNF_VNA_tracedata\\TDUJNF_VNA_tracedata.h5",
+    "instruments": {
+        "vna": {
+            "Average": {
+                "content": true,
+                "has_setter": true
+            },
+            "averages": {
+                "content": 1,
+                "has_setter": true
+            },
+            "bandwidth": {
+                "content": 500.0,
+                "has_setter": true
+            },
+            "centerfreq": {
+                "content": 4750000000.0,
+                "has_setter": true
+            },
+            "channel_index": {
+                "content": 1,
+                "has_setter": true
+            },
+            "count": {
+                "content": 1,
+                "has_setter": true
+            },
+            "cw": {
+                "content": false,
+                "has_setter": true
+            },
+            "cwfreq": {
+                "content": null,
+                "has_setter": true
+            },
+            "edel_status": {
+                "content": true,
+                "has_setter": true
+            },
+            "nop": {
+                "content": 500,
+                "has_setter": true
+            },
+            "power": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "span": {
+                "content": 1100000000.0,
+                "has_setter": true
+            },
+            "startfreq": {
+                "content": 4200000000.0,
+                "has_setter": true
+            },
+            "startpower": {
+                "content": -10.0,
+                "has_setter": true
+            },
+            "stopfreq": {
+                "content": 5300000000.0,
+                "has_setter": true
+            },
+            "stoppower": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "sweep_mode": {
+                "content": "cont",
+                "has_setter": true
+            },
+            "sweep_type": {
+                "content": "LIN",
+                "has_setter": true
+            },
+            "sweeptime": {
+                "content": 1.16664,
+                "has_setter": false
+            },
+            "sweeptime_averages": {
+                "content": 1.16664,
+                "has_setter": false
+            },
+            "trigger_source": {
+                "content": "IMM",
+                "has_setter": true
+            }
+        }
+    },
+    "measurement_func": "measure_1D",
+    "measurement_type": "spectroscopy",
+    "rating": 3,
+    "run_id": "RESULTS_H5",
+    "sample": {
+        "comment": "",
+        "name": "Arbitrary Sample"
+    },
+    "user": "Amy",
+    "uuid": "TDUJNF",
+    "web_visible": true,
+    "x_axis": "frequency",
+    "y_axis": "",
+    "z_axis": ""
+}
