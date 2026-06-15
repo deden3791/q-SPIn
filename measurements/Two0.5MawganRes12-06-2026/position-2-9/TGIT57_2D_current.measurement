@@ -1,0 +1,182 @@
+{
+    "analyzed": false,
+    "hdf_relpath": "RESULTS_H5\\Amy\\TGIT57_2D_current\\TGIT57_2D_current.h5",
+    "instruments": {
+        "caen": {
+            "current": {
+                "content": 2.48714184761,
+                "has_setter": false
+            },
+            "current_ramp_rate": {
+                "content": 1.46000003815,
+                "has_setter": true
+            },
+            "floating_mode": {
+                "content": "F",
+                "has_setter": true
+            },
+            "output_mode": {
+                "content": "I",
+                "has_setter": true
+            },
+            "setcurrent": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "setvoltage": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "status": {
+                "content": false,
+                "has_setter": false
+            },
+            "voltage": {
+                "content": 0.0,
+                "has_setter": false
+            },
+            "voltage_ramp_rate": {
+                "content": 0.901000022888,
+                "has_setter": true
+            }
+        },
+        "caen2": {
+            "current": {
+                "content": 0.0,
+                "has_setter": false
+            },
+            "current_ramp_rate": {
+                "content": 2.5,
+                "has_setter": true
+            },
+            "floating_mode": {
+                "content": "N",
+                "has_setter": true
+            },
+            "output_mode": {
+                "content": "I",
+                "has_setter": true
+            },
+            "setcurrent": {
+                "content": 13.0,
+                "has_setter": true
+            },
+            "setvoltage": {
+                "content": 13.0,
+                "has_setter": true
+            },
+            "status": {
+                "content": false,
+                "has_setter": false
+            },
+            "voltage": {
+                "content": 0.0,
+                "has_setter": false
+            },
+            "voltage_ramp_rate": {
+                "content": 0.001,
+                "has_setter": true
+            }
+        },
+        "vna": {
+            "Average": {
+                "content": true,
+                "has_setter": true
+            },
+            "averages": {
+                "content": 1,
+                "has_setter": true
+            },
+            "bandwidth": {
+                "content": 500.0,
+                "has_setter": true
+            },
+            "centerfreq": {
+                "content": 4750000000.0,
+                "has_setter": true
+            },
+            "channel_index": {
+                "content": 1,
+                "has_setter": true
+            },
+            "count": {
+                "content": 1,
+                "has_setter": true
+            },
+            "cw": {
+                "content": false,
+                "has_setter": true
+            },
+            "cwfreq": {
+                "content": null,
+                "has_setter": true
+            },
+            "edel_status": {
+                "content": true,
+                "has_setter": true
+            },
+            "nop": {
+                "content": 500,
+                "has_setter": true
+            },
+            "power": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "span": {
+                "content": 1100000000.0,
+                "has_setter": true
+            },
+            "startfreq": {
+                "content": 4200000000.0,
+                "has_setter": true
+            },
+            "startpower": {
+                "content": -10.0,
+                "has_setter": true
+            },
+            "stopfreq": {
+                "content": 5300000000.0,
+                "has_setter": true
+            },
+            "stoppower": {
+                "content": 0.0,
+                "has_setter": true
+            },
+            "sweep_mode": {
+                "content": "cont",
+                "has_setter": true
+            },
+            "sweep_type": {
+                "content": "LIN",
+                "has_setter": true
+            },
+            "sweeptime": {
+                "content": 1.16664,
+                "has_setter": false
+            },
+            "sweeptime_averages": {
+                "content": 1.16664,
+                "has_setter": false
+            },
+            "trigger_source": {
+                "content": "IMM",
+                "has_setter": true
+            }
+        }
+    },
+    "measurement_func": "measure_2D",
+    "measurement_type": "spectroscopy",
+    "rating": 3,
+    "run_id": "RESULTS_H5",
+    "sample": {
+        "comment": "",
+        "name": "Arbitrary Sample"
+    },
+    "user": "Amy",
+    "uuid": "TGIT57",
+    "web_visible": true,
+    "x_axis": "current",
+    "y_axis": "frequency",
+    "z_axis": ""
+}

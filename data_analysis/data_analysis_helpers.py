@@ -9,7 +9,9 @@ def read_h5(filepath):
         amplitude = np.array(f['entry']['data0']['amplitude'])
         frequencyGHz = np.array(f['entry']['data0']['frequency']) / 1e9
         current = np.array(f['entry']['data0']['current'])
-    return amplitude, frequencyGHz, current
+
+        amplitude_dB = 20 * np.log10(np.abs(amplitude))
+    return amplitude, amplitude_dB, frequencyGHz, current
 
 def cavity_detection(amplitude_dB, frequencyGHz):
     '''Detect cavity resonance and dip frequencies from the reference trace (last current).'''
