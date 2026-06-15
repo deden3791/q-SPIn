@@ -4,11 +4,9 @@ from matplotlib.widgets import Button
 from pathlib import Path
 import extractParameters
 
-# ====== path config ======
 SINGLE_BASE = Path(r"measurements\BigMagnet_MawganRes_0.5mm_21052026")
 COMBO_BASE  = Path(r"C:\Users\2514468E\OneDrive - University of Glasgow\PhD\q-SPIn\measurements\Two0.5MawganRes12-06-2026")
 
-# Single-position filepaths keyed by position number
 SINGLE_PATHS = {
     1: SINGLE_BASE / r"position 1\TFBZPK_2D_current.h5",
     2: SINGLE_BASE / r"position 2\TFC0GE_2D_current.h5",
@@ -21,12 +19,10 @@ SINGLE_PATHS = {
     9: SINGLE_BASE / r"position 9\TFC3Q1_2D_current.h5",
 }
 
-# ====== state ======
 selected = []   # holds 0, 1, or 2 position numbers
 buttons  = {}   # maps position number -> Button object
 btn_axes = {}   # maps position number -> Axes object
 
-# ====== colours ======
 COLOR_DEFAULT  = '0.85'
 COLOR_SELECTED = '#4C9BE8'
 COLOR_ERROR    = '#E84C4C'

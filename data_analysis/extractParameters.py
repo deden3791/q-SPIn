@@ -22,9 +22,9 @@ filepaths = [
 # ====== constants ======
 freq_min = 4.4
 freq_max = 5.2
-window_halfspan       = 0.1
-peak_prominence       = 0.45
-dip_prominence        = 0.1
+window_halfspan = 0.1
+peak_prominence = 0.45
+dip_prominence = 0.1
 min_peak_distance_pts = 1
 
 # ====== main ======
