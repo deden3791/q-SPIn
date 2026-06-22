@@ -1,0 +1,37 @@
+{
+    "caen": {
+        "current": 0.00416466174647,
+        "current_ramp_rate": 1.46000003815,
+        "floating_mode": "F",
+        "output_mode": "I",
+        "setcurrent": 0.0,
+        "setvoltage": 0.0,
+        "status": false,
+        "voltage": 0.0,
+        "voltage_ramp_rate": 0.901000022888
+    },
+    "vna": {
+        "Average": true,
+        "averages": 1,
+        "bandwidth": 500.0,
+        "centerfreq": 9500000000.0,
+        "channel_index": 1,
+        "count": 1,
+        "cw": false,
+        "cwfreq": null,
+        "edel_status": true,
+        "nop": 500,
+        "power": -20.0,
+        "power_offset": null,
+        "span": 17000000000.0,
+        "startfreq": 1000000000.0,
+        "startpower": -10.0,
+        "stopfreq": 18000000000.0,
+        "stoppower": 0.0,
+        "sweep_mode": "cont",
+        "sweep_type": "LIN",
+        "sweeptime": 1.16664,
+        "sweeptime_averages": 1.16664,
+        "trigger_source": "IMM"
+    }
+}

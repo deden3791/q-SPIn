@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from data_analysis_helpers import read_h5, dip_tracking, cavity_detection, theil_sen_slope
+from data_analysis_helpers import read_h5_3D, dip_tracking, cavity_detection, theil_sen_slope
 
 def find_slope(filepaths, freq_min, freq_max, show=False):
     results = {}
     for filepath in filepaths:
-        amplitude, amplitude_dB, frequencyGHz, current = read_h5(filepath)
+        amplitude, amplitude_dB, frequencyGHz, current = read_h5_3D(filepath)
         print("Analyzing file:", filepath)
 
         f_c, f_dip = cavity_detection(amplitude_dB, frequencyGHz)

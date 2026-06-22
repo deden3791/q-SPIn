@@ -2,8 +2,98 @@ import numpy as np
 import h5py
 from scipy.signal import find_peaks
 from matplotlib.ticker import MultipleLocator
+import matplotlib.pyplot as plt
 
-def read_h5(filepath):
+def make_colour_figure():
+    fig, ax = plt.subplots(figsize=(8, 7))
+    
+    #ax.set_ylim(6.41, 6.465)
+    #ax.set_xlim(-232.3, -227.85)
+    #ax.set_xlim(228.85, 231.05)
+
+    plt.rcParams['font.family'] = 'Arial'
+
+    ax.set_xlabel(r"$\omega_0\: / \: 2\pi$ (GHz)", fontsize=20, labelpad=10) #, usetex=True
+    ax.set_ylabel(r'$\mathrm{\omega \: / \: 2\pi}$ (GHz)', fontsize=20, labelpad=10) #, usetex=True
+
+    ax.spines['top'].set_linewidth(1.15)
+    ax.spines['bottom'].set_linewidth(1.15)
+    ax.spines['left'].set_linewidth(1.15)
+    ax.spines['right'].set_linewidth(1.15)
+
+    ax.tick_params(axis='both', which='both', direction='in', labelsize=20, width=1.15, pad = 5, length=6, top=True, right=True)
+
+    #ax.set_xticks([229, 230, 231])  # Replace with your desired x-axis tick values
+    #ax.set_xticks([-229, -230, -231])  # Replace with your desired x-axis tick values
+    #ax.set_yticks([6.42, 6.44, 6.46])  # Replace with your desired y-axis tick values
+
+    return fig, ax
+
+def plot_pcolormesh(cur, frequency_GHz, amp, norm):
+    
+    gamma = 28.025           # Gyromagnetic ratio in GHz/T,
+    #cur = (cur*1e3)/gamma                   #H_0 in mT
+    
+    if norm:
+        amp_min = np.min(amp)
+        amp_max = np.max(amp)
+
+        amp = amp - amp_min
+        scale_factor = 1 / (amp_max - amp_min)
+        amp *= scale_factor
+        
+    fig, ax = make_colour_figure()
+    cax = ax.pcolormesh(cur, frequency_GHz, amp.T, shading='auto', cmap='inferno')
+    cbar = plt.colorbar(cax, shrink=0.8)
+    cbar.set_label(r'S$_{21}$', fontsize=20, labelpad=10, rotation=90)
+    #cbar.set_ticks([1.0, 0.5, 0.0])
+    cbar.ax.yaxis.set_tick_params(labelsize=18, width=1.5, length=0, direction='inout', right=True, left=True, top=True, bottom=True)
+    cbar.ax.set_position([0.82, 0.38, 0.03, 0.5])  # left, bottom, width, height
+    cbar.outline.set_linewidth(1.5)
+    plt.tight_layout()
+
+def anritsu_SignalProcessing(amp, val):
+    if len(amp.shape) == 3:
+        depth, rows, cols = amp.shape
+        for k in range(depth):
+            for i in range(rows):
+                for j in range(cols):
+                    if amp[k, i, j] < val:
+                        continue  # Move to the next element if current one is greater than 0.008
+
+                    # If current value is less than or equal to 0.008, update it and previous values
+                    while i > 0 and amp[k, i-1, j] >= val:
+                        i -= 1
+                    amp[k, i, j] = amp[k, i-1, j] if i > 0 else amp[k, i, j]  # Set current value
+    else:
+        rows, cols = amp.shape
+        for i in range(rows):
+            for j in range(cols):
+                if amp[i, j] < 1:
+                    continue  # Move to the next element if current one is greater than 0.008
+
+                # If current value is less than or equal to 0.008, update it and previous values
+                while i > 0 and amp[i-1, j] >= 1:
+                    i -= 1
+                amp[i, j] = amp[i-1, j] if i > 0 else amp[i, j]  # Set current value
+
+    return amp
+
+def background_removal(amplitude):
+    return amplitude - amplitude[0]
+
+def read_h5_2D(filepath):
+    """Read amplitude, frequency (GHz), and current from a 2D HDF5 file."""
+    with h5py.File(filepath, 'r') as f:
+        amplitude = np.array(f['entry']['data0']['amplitude'])
+        frequencyGHz = np.array(f['entry']['data0']['frequency']) / 1e9
+        phase = np.array(f['entry']['data0']['phase'])
+
+        phase_deg = phase * 360 / (2*np.pi)
+        amplitude_dB = 20 * np.log10(np.abs(amplitude))
+    return amplitude, amplitude_dB, frequencyGHz, phase_deg
+
+def read_h5_3D(filepath):
     """Read amplitude, frequency (GHz), and current from an HDF5 file."""
     with h5py.File(filepath, 'r') as f:
         amplitude = np.array(f['entry']['data0']['amplitude'])
