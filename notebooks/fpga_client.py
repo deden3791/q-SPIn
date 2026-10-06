@@ -86,6 +86,15 @@ class FPGAClient:
 
         return iq
 
+    def time_axis(self):
+        self.socket.send_json({
+            "command": "time_axis"
+        })
+
+        return np.frombuffer(
+            self.socket.recv(),
+            dtype=np.float32
+        )
 
     def status(self):
         """
